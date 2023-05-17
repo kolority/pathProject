@@ -4,7 +4,7 @@
 
 <head>
 	<meta charset="UTF-8">
-	<title>Grid Slider</title>
+	<title>Pathfinder</title>
 
 	<link rel="stylesheet" href="/public/css/styles.css" type="text/css">
 </head>
@@ -16,23 +16,30 @@
 
 	<div class="currHead">
 		<div class="header-item">
-			<h2>Column 1</h2>
-			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id nulla quis ex dictum consequat in eget
-				velit. Donec nec pulvinar nisl. Ut a ultricies lectus. Sed vel faucibus mi, eget placerat lorem. Nulla
-				facilisi. Nulla sodales mi sit amet tellus pharetra, sed eleifend lorem efficitur. </p>
+			<h2>Instructions</h2>
+
+				1. &nbspTo add walls, click on any square in the grid.<br>
+				2. &nbspTo set the start and end points, click on the corresponding buttons and then click on the desired squares in the grid.<br>
+				3. &nbspTo clear the grid, click on the "clear" button.<br>
+				4. &nbspTo select the algorithm to be used, click on the drop down menu and select the desired algorithm.<br>
+				5. &nbspTo begin the algorithm, click on the "start algorithm" button.<br>
+				
+		
 		</div>
 		<div class="header-item">
-			<h2>Column 2</h2>
-			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id nulla quis ex dictum consequat in eget
-				velit. Donec nec pulvinar nisl. Ut a ultricies lectus. Sed vel faucibus mi, eget placerat lorem. Nulla
-				facilisi. Nulla sodales mi sit amet tellus pharetra, sed eleifend lorem efficitur. </p>
+			<h2>Algorithms</h2>
+			<p>Current searching algorithms include: </p>
+			<br>
+			
+				Dijkstra's algorithm
+				<br>
+				Breadth-first search
+				<br>
+				Depth-first search
+				<br>
+				
 		</div>
-		<div class="header-item">
-			<h2>Column 3</h2>
-			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id nulla quis ex dictum consequat in eget
-				velit. Donec nec pulvinar nisl. Ut a ultricies lectus. Sed vel faucibus mi, eget placerat lorem. Nulla
-				facilisi. Nulla sodales mi sit amet tellus pharetra, sed eleifend lorem efficitur. </p>
-		</div>
+
 	</div>
     <main class="main">
       <div class="settings">
@@ -47,57 +54,13 @@
 		<button id="startBtn">Start</button>
         <button id="endBtn">End</button>
         <button id="startAlgoBtn">Start algorithm</button>
-		<button id="hasStartBtn">hasStart</button>
 		<select name="algos" id="algos">
 			<option value="dijkstra">Dijkstra</option>
+			<option value="temp">temp</option>
+			<option value="bfs">bfs</option>
+			<option value="dfs">dfs</option>
 		  </select>
       </div>
     </main>
     <script src="/public/script.js"></script>
   </body>
-
-<!-- <head>
-	<meta charset="utf-8" />
-	<title>Terps Supermarket</title>
-	<link rel="stylesheet" href="/public/css/styles.css" type="text/css">
-</head>
-
-<body>
-	<h1>Pathfinding Visualizer</h1>
-	<hr>
-	<div class="currHead">
-		<div class="header-item">
-			<h2>Column 1</h2>
-			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id nulla quis ex dictum consequat in eget
-				velit. Donec nec pulvinar nisl. Ut a ultricies lectus. Sed vel faucibus mi, eget placerat lorem. Nulla
-				facilisi. Nulla sodales mi sit amet tellus pharetra, sed eleifend lorem efficitur. </p>
-		</div>
-		<div class="header-item">
-			<h2>Column 2</h2>
-			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id nulla quis ex dictum consequat in eget
-				velit. Donec nec pulvinar nisl. Ut a ultricies lectus. Sed vel faucibus mi, eget placerat lorem. Nulla
-				facilisi. Nulla sodales mi sit amet tellus pharetra, sed eleifend lorem efficitur. </p>
-		</div>
-		<div class="header-item">
-			<h2>Column 3</h2>
-			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id nulla quis ex dictum consequat in eget
-				velit. Donec nec pulvinar nisl. Ut a ultricies lectus. Sed vel faucibus mi, eget placerat lorem. Nulla
-				facilisi. Nulla sodales mi sit amet tellus pharetra, sed eleifend lorem efficitur. </p>
-		</div>
-	</div>
-
-	<div class="grid-container">
-		<div class="grid-item"></div>
-		<div class="grid-item"></div>
-		<div class="grid-item"></div>
-		<div class="grid-item"></div>
-		<div class="grid-item"></div>
-		<div class="grid-item"></div>
-		<div class="grid-item"></div>
-		<div class="grid-item"></div>
-		<div class="grid-item"></div>
-	  </div>
-	  <script src="/public/script.js"></script>
-</body>
-
-</html> -->

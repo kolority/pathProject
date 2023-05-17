@@ -4,6 +4,7 @@ const DEFAULT_COLOR = '#333333'
 let currentColor = DEFAULT_COLOR
 let currentMode = DEFAULT_MODE
 let currentSize = DEFAULT_SIZE
+let algoRan = false;
 
 function setCurrentSize(newSize) {
     currentSize = newSize
@@ -13,7 +14,7 @@ function setCurrentMode(newMode) {
     activateButton(newMode)
     currentMode = newMode;
 }
-const hasStartBtn = document.getElementById('hasStartBtn')
+
 const startBtn = document.getElementById('startBtn')
 const endBtn = document.getElementById('endBtn')
 const startAlgoBtn = document.getElementById('startAlgoBtn')
@@ -24,8 +25,7 @@ const sizeValue = document.getElementById('sizeValue')
 const sizeSlider = document.getElementById('sizeSlider')
 const grid = document.getElementById('grid')
 
-startAlgoBtn.onclick = () => colorShortestPathGradient(findShortPathV2())
-hasStartBtn.onclick = () => endBlockExist()
+startAlgoBtn.onclick = () => runAlgo(getAlgoType())
 startBtn.onclick = () => setCurrentMode('start')
 endBtn.onclick = () => setCurrentMode('end')
 colorBtn.onclick = () => setCurrentMode('color')
@@ -37,6 +37,24 @@ sizeSlider.onchange = (e) => changeSize(e.target.value)
 let mouseDown = false
 document.body.onmousedown = () => (mouseDown = true)
 document.body.onmouseup = () => (mouseDown = false)
+
+//function that gets the selected value from html of id='algos' based in its current option selected
+function getAlgoType() {
+    return document.getElementById('algos').value;
+}
+
+function runAlgo(algoName) {
+    if (algoName == "dijkstra") {
+        colorShortestPathGradient(findShortPathV2());
+        return;
+    }
+    if (algoName == "dfs") {
+        colorShortestPathGradient2(findShortPathDFS());
+    }
+    if( algoName == "bfs"){
+        colorShortestPathGradientBFS(findShortPathV2());
+    }
+}
 
 function changeSize(value) {
     setCurrentSize(value)
@@ -56,6 +74,7 @@ function reloadGrid() {
 function clearGrid() {
     grid.innerHTML = ''
 }
+
 
 function setupGrid(size) {
     grid.style.gridTemplateColumns = `repeat(${size}, 1fr)`
@@ -78,18 +97,30 @@ function changeColor(e) {
         e.target.classList.remove('start'); // remove class "start" if in eraser mode
         e.target.classList.remove('end');
     } else if (currentMode === 'color') {
+        if (algoRan == true) {
+            reloadGrid();
+            algoRan = false;
+        }
         e.target.style.backgroundColor = currentColor;
         e.target.classList.add('blockage'); // add class "blockage" if in color mode
         e.target.classList.remove('start'); // remove class "start" if in eraser mode
         e.target.classList.remove('end');
     } else if (currentMode === 'start') {
         removeStartBlock();
+        if (algoRan == true) {
+            reloadGrid();
+            algoRan = false;
+        }
         e.target.style.backgroundColor = '#00ff00';
         e.target.classList.add('start'); // add class "start" if in start mode
         e.target.classList.remove('blockage'); // remove class "blockage" if in eraser mode
         e.target.classList.remove('end');
     } else if (currentMode === 'end') {
         removeEndBlock();
+        if (algoRan == true) {
+            reloadGrid();
+            algoRan = false;
+        }
         e.target.style.backgroundColor = '#FF0000';
         e.target.classList.add('end'); // add class "end" if in end mode
         e.target.classList.remove('blockage'); // remove class "blockage" if in eraser mode
@@ -124,12 +155,11 @@ function startBlockExist() {
     var gridElements = document.getElementsByClassName('grid-element');
     for (var i = 0; i < gridElements.length; i++) {
         if (gridElements[i].classList.contains('start')) {
-            console.log("Start block found")
-            console.log(gridElements[i].classList.contains('start'))
+
             return true;
         }
     }
-    console.log("No start block found")
+
     return false;
 }
 
@@ -138,12 +168,11 @@ function endBlockExist() {
     var gridElements = document.getElementsByClassName('grid-element');
     for (var i = 0; i < gridElements.length; i++) {
         if (gridElements[i].classList.contains('end')) {
-            console.log("End block found")
-            console.log(gridElements[i].classList.contains('end'))
+
             return true;
         }
     }
-    console.log("No end block found")
+
     return false;
 }
 
@@ -271,15 +300,49 @@ function convertGridToNodes() {
 }
 //does the same as colorShortestPath() but colors in a gradient the further it is from the location of the first node the darker the color
 function colorShortestPathGradient(visited) {
-    if(!startBlockExist() || !endBlockExist()){
+    if (!startBlockExist() || !endBlockExist()) {
         return;
     }
+    //store the start and end node
+    var startNode = visited[0][0];
+    var endNode = visited[0][visited[0].length - 1];
+
+    var gridElements = document.getElementsByClassName('grid-element');
+    var blockage = [];
+    for (var i = 0; i < gridElements.length; i++) {
+        if (gridElements[i].classList.contains('blockage')) {
+            blockage.push(i);
+        }
+    }
+
+    reloadGrid();
+
+    //for every location in blockage, add blockage back to the grid
+    for (var i = 0; i < blockage.length; i++) {
+        gridElements[blockage[i]].classList.add('blockage');
+        gridElements[blockage[i]].style.backgroundColor = currentColor;
+    }
+
+
+    //place start and end node back into grid
+    var gridElements = document.getElementsByClassName('grid-element');
+    gridElements[startNode.loc].classList.add('start');
+    gridElements[startNode.loc].style.backgroundColor = '#00ff00';
+    gridElements[endNode.loc].classList.add('end');
+    gridElements[endNode.loc].style.backgroundColor = '#FF0000';
+
+
+
+
+    convertGridToNodes();
     var startLoc = visited[0][0].loc;
+
     let x = Math.floor(startLoc / Math.sqrt(document.getElementsByClassName('grid-element').length));
     let y = startLoc % Math.sqrt(document.getElementsByClassName('grid-element').length);
 
     // Array to hold all Promises
     const promises = [];
+
 
     for (var i = 0; i < visited[0].length; i++) {
         let x2 = Math.floor(visited[0][i].loc / Math.sqrt(document.getElementsByClassName('grid-element').length));
@@ -312,6 +375,10 @@ function colorShortestPathGradient(visited) {
 
         path.push(visited[0][0]);
         path.reverse();
+        //remove first element from path, and remove but store end path
+        var endPath = path.pop();
+        path.shift();
+
 
         //for each element in path color it in a gradient from light green to dark green on a delay
         for (var i = 0; i < path.length; i++) {
@@ -325,11 +392,180 @@ function colorShortestPathGradient(visited) {
             promises.push(promise);
         }
 
+        document.getElementById(endPath.loc).style.backgroundColor = "red";
         // Wait for all Promises to resolve before executing the next code block
         Promise.all(promises).then(() => {
             console.log("All done!");
         });
     });
+    algoRan = true;
+}
+
+function colorShortestPathGradient2(visited) {
+    if (!startBlockExist() || !endBlockExist()) {
+        return;
+    }
+    //store the start and end node
+    var startNode = visited[0][0];
+    var endNode = visited[0][visited[0].length - 1];
+
+    var gridElements = document.getElementsByClassName('grid-element');
+    var blockage = [];
+    for (var i = 0; i < gridElements.length; i++) {
+        if (gridElements[i].classList.contains('blockage')) {
+            blockage.push(i);
+        }
+    }
+
+    reloadGrid();
+
+    //for every location in blockage, add blockage back to the grid
+    for (var i = 0; i < blockage.length; i++) {
+        gridElements[blockage[i]].classList.add('blockage');
+        gridElements[blockage[i]].style.backgroundColor = currentColor;
+    }
+
+
+    //place start and end node back into grid
+    var gridElements = document.getElementsByClassName('grid-element');
+    gridElements[startNode.loc].classList.add('start');
+    gridElements[startNode.loc].style.backgroundColor = '#00ff00';
+    gridElements[endNode.loc].classList.add('end');
+    gridElements[endNode.loc].style.backgroundColor = '#FF0000';
+
+
+
+
+    convertGridToNodes();
+    var startLoc = visited[0][0].loc;
+
+    let x = Math.floor(startLoc / Math.sqrt(document.getElementsByClassName('grid-element').length));
+    let y = startLoc % Math.sqrt(document.getElementsByClassName('grid-element').length);
+
+    // Array to hold all Promises
+    const promises = [];
+
+    //remove end block from visited 
+    visited[0].pop();
+
+
+    for (var i = 0; i < visited[0].length; i++) {
+        const promise = new Promise((resolve) => {
+            setTimeout(function (i) {
+                var color = Math.floor(255 / i);
+                document.getElementById(visited[0][i].loc).style.backgroundColor = "rgb(0,0," + color + ")";
+                resolve();
+            }, 10 * i, i);
+        });
+
+        promises.push(promise);
+    }
+    //iterate though the visited array again and this time color it in a gradient from light yellow to dark yellow on a delay based on its index in visited
+    Promise.all(promises).then(() => {
+        let tempLen = visited[0].length;
+        for (var i = 0; i < visited[0].length; i++) {
+            // Wrap setTimeout into a Promise object
+            const promise = new Promise((resolve) => {
+                
+                setTimeout(function (i) {
+                    var color = Math.floor(255 / (i/tempLen));
+                    document.getElementById(visited[0][i].loc).style.backgroundColor = "rgb(0," + color + ",0)";
+                    resolve();
+                }, 10 * i, i);
+            });
+            promises.push(promise);
+        }
+    });
+
+    algoRan = true;
+}
+
+function colorShortestPathGradientBFS(visited) {
+    if (!startBlockExist() || !endBlockExist()) {
+        return;
+    }
+    //store the start and end node
+    var startNode = visited[0][0];
+    var endNode = visited[0][visited[0].length - 1];
+
+    var gridElements = document.getElementsByClassName('grid-element');
+    var blockage = [];
+    for (var i = 0; i<gridElements.length; i++){
+        if(gridElements[i].classList.contains('blockage')){
+            blockage.push(i);
+        }
+    }
+    
+    reloadGrid();
+
+    //for every location in blockage, add blockage back to the grid
+    for(var i = 0; i < blockage.length; i++){
+        gridElements[blockage[i]].classList.add('blockage');
+        gridElements[blockage[i]].style.backgroundColor = currentColor;
+    }
+    
+
+    //place start and end node back into grid
+    var gridElements = document.getElementsByClassName('grid-element');
+    gridElements[startNode.loc].classList.add('start');
+    gridElements[startNode.loc].style.backgroundColor = '#00ff00';
+    gridElements[endNode.loc].classList.add('end');
+    gridElements[endNode.loc].style.backgroundColor = '#FF0000';
+
+
+
+
+    convertGridToNodes();
+    var startLoc = visited[0][0].loc;
+
+    let x = Math.floor(startLoc / Math.sqrt(document.getElementsByClassName('grid-element').length));
+    let y = startLoc % Math.sqrt(document.getElementsByClassName('grid-element').length);
+
+    // Array to hold all Promises
+    const promises = [];
+
+
+    for (var i = 0; i < visited[0].length; i++) {
+        let x2 = Math.floor(visited[0][i].loc / Math.sqrt(document.getElementsByClassName('grid-element').length));
+        let y2 = visited[0][i].loc % Math.sqrt(document.getElementsByClassName('grid-element').length);
+        let distance = Math.sqrt((x2 - x) ** 2 + (y2 - y) ** 2);
+
+        // Wrap setTimeout into a Promise object
+        const promise = new Promise((resolve) => {
+            setTimeout(function (i) {
+                var color = Math.floor(255 / distance);
+                document.getElementById(visited[0][i].loc).style.backgroundColor = "rgb(0,0," + color + ")";
+                resolve();
+            }, 10 * i, i);
+        });
+
+        promises.push(promise);
+    }
+
+    // Wait for all Promises to resolve before executing the next code block
+    Promise.all(promises).then(() => {
+        for (var i = 0; i < visited[0].length; i++) {
+            let x2 = Math.floor(visited[0][i].loc / Math.sqrt(document.getElementsByClassName('grid-element').length));
+            let y2 = visited[0][i].loc % Math.sqrt(document.getElementsByClassName('grid-element').length);
+            let distance = Math.sqrt((x2 - x) ** 2 + (y2 - y) ** 2);
+    
+            // Wrap setTimeout into a Promise object
+            const promise = new Promise((resolve) => {
+                setTimeout(function (i) {
+                    var color = Math.floor(255 / distance);
+                    document.getElementById(visited[0][i].loc).style.backgroundColor = "rgb(0,"+color + ",0)";
+                    resolve();
+                }, 10 * i, i);
+            });
+    
+            promises.push(promise);
+        }
+    
+        Promise.all(promises).then(() => {
+            console.log("All done!");
+        });
+    });
+    algoRan = true;
 }
 
 
@@ -395,10 +631,34 @@ function findShortPathV2() {
     return [visited, []];
 }
 
-
-
-
-
+function findShortPathDFS() {
+    let x = convertGridToNodes();
+    var startNode = x[0]
+    var endNode = x[1];
+    let stack = [];
+    let visited = [];
+    stack.push(startNode);
+    while (stack.length > 0) {
+        let temp = stack.pop();
+        visited.push(temp);
+        if (temp.isEnd == true) {
+            break;
+        }
+        if (temp.top != null && !visited.includes(temp.top) && temp.top.blockage == false) {
+            stack.push(temp.top);
+        }
+        if (temp.right != null && !visited.includes(temp.right) && temp.right.blockage == false) {
+            stack.push(temp.right);
+        }
+        if (temp.bottom != null && !visited.includes(temp.bottom) && temp.bottom.blockage == false) {
+            stack.push(temp.bottom);
+        }
+        if (temp.left != null && !visited.includes(temp.left) && temp.left.blockage == false) {
+            stack.push(temp.left);
+        }
+    }
+    return [visited, []];
+}
 
 window.onload = () => {
     setupGrid(DEFAULT_SIZE)
