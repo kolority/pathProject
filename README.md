@@ -5,8 +5,6 @@ Visualizes various pathfinding algorithms on a grid.
 
 Example Images : 
 
+<img width="1258" alt="Screenshot 2023-05-17 at 2 51 50 PM" src="https://github.com/kolority/pathProject/assets/95579140/f4566c02-a3f6-49a2-99f1-42388497e41e">
 
-<img width="1269" alt="Screenshot 2023-04-28 at 4 57 10 PM" src="https://user-images.githubusercontent.com/95579140/235253019-396663f3-7252-4003-be75-1272b7da9dd0.png">
-
-
-<img width="1179" alt="Screenshot 2023-04-28 at 4 57 19 PM" src="https://user-images.githubusercontent.com/95579140/235253030-38ea9c86-3589-4c8c-be66-05145c4386f0.png">
+<img width="1208" alt="Screenshot 2023-05-17 at 2 52 04 PM" src="https://github.com/kolority/pathProject/assets/95579140/b0b03429-65c8-438c-8b38-ae09ae97a73c">
